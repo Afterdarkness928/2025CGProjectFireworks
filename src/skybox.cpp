@@ -89,7 +89,7 @@ void Skybox::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatr
     glDepthFunc(GL_LEQUAL);  // 关键：改为小于或等于[3,6](@ref)
     glDepthMask(GL_FALSE);   // 禁用深度写入
 
-    std::cout << "=== skybox render test ===" << std::endl;
+    //std::cout << "=== skybox render test ===" << std::endl;
 
     // 检查OpenGL错误
     GLenum error = glGetError();
@@ -104,8 +104,8 @@ void Skybox::render(const glm::mat4& viewMatrix, const glm::mat4& projectionMatr
 
     if (!shaderInitialized) {
         try {
-            skyboxShader = Shader("D:/CGFinalProject/CGFP/shaders/skybox.vert",
-                "D:/CGFinalProject/CGFP/shaders/skybox.frag");
+            skyboxShader = Shader("shaders/skybox.vert",
+                "shaders/skybox.frag");
             shaderInitialized = true;
             std::cout << "create success" << std::endl;
         }

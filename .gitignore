@@ -118,6 +118,16 @@ ipch/
 *.vspx
 *.sap
 
+# Ignore local VS + CMake build dirs
+vs-build/
+build/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+CMakeCache.txt
+CMakeFiles/
+
 # Visual Studio Trace Files
 *.e2e
 
