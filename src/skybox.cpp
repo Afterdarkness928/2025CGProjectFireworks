@@ -49,7 +49,7 @@ GLuint Skybox::loadCubeMap(const std::vector<std::string>& faces) {
 
     int width, height, nrChannels;
     
-    //stb_set_flip_vertically_on_load(false);
+    stbi_set_flip_vertically_on_load(false);
     
     // 不要翻转图像，因为立方体贴图的方向与普通2D纹理不同
 
