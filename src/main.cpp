@@ -9,14 +9,9 @@
 #include "camera.h"
 #include "skybox.h"
 
-<<<<<<< HEAD
-
 #include <filesystem> 
 
 // 窗口尺寸
-=======
-#include <filesystem>
->>>>>>> a84869da9409fdb65200a8a4124e90fa54e25bbd
 
 
 const int WINDOW_WIDTH = 800;
@@ -89,9 +84,9 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 
 int main() {
 
-    std::cout << "Current working directory: "
-        << std::filesystem::current_path().string()
-        << std::endl;
+    //std::cout << "Current working directory: "
+    //    << std::filesystem::current_path().string()
+    //    << std::endl;
 
     // 初始化GLFW
 
