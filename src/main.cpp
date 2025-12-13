@@ -166,7 +166,7 @@ int main() {
     std::vector<std::string> skyboxTextures = {
         "resources/skybox/right.jpg",
         "resources/skybox/left.jpg",
-        "resources/skybox/up.jpg",
+        "resources/skybox/top.jpg",
         "resources/skybox/bottom.jpg",
         "resources/skybox/front.jpg",
         "resources/skybox/back.jpg"
