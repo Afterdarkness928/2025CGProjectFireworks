@@ -1,12 +1,16 @@
 #include"glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
+#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "particle_system.h"
 #include "camera.h"
 #include "skybox.h"
 
+
+#include <filesystem> 
 
 // 窗口尺寸
 
@@ -83,6 +87,7 @@ int main() {
 
     // 初始化GLFW
 
+
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return -1;
@@ -152,8 +157,17 @@ int main() {
 
     // 初始化天空盒
 
+    std::vector<std::string> skyboxTextures = {
+        "resources/skybox/right.jpg",
+        "resources/skybox/left.jpg",
+        "resources/skybox/up.jpg",
+        "resources/skybox/bottom.jpg",
+        "resources/skybox/front.jpg",
+        "resources/skybox/back.jpg"
+    };
+
     skybox = new Skybox();
-    if (!skybox->init()) {
+    if (!skybox->init(skyboxTextures)) {
         std::cerr << "Failed to initialize skybox" << std::endl;
         return -1;
     }
