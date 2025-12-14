@@ -5,13 +5,14 @@
 #include "stb_image.h"
 #include <iostream>
 
-// ¶¥µãÊı¾İ°üº¬ position Óë texcoord
+// é¡¶ç‚¹æ•°æ®åŒ…å« position ä¸ texcoord
 
 static float vertices[] = {
 
-    // ===================== Ê÷¸É£º³¤·½Ìå£¨4¸ö²àÃæ£© =====================
+    // ===================== æ ‘å¹²ï¼šé•¿æ–¹ä½“ï¼ˆ4ä¸ªä¾§é¢ï¼‰ =====================
 
-    // Ç°Ãæ (+Z)
+    // å‰é¢ (+Z)
+
     -0.1f, 0.0f,  0.1f,   0.0f, 0.0f,
      0.1f, 0.0f,  0.1f,   1.0f, 0.0f,
      0.1f, 0.4f,  0.1f,   1.0f, 1.0f,
@@ -20,7 +21,8 @@ static float vertices[] = {
      0.1f, 0.4f,  0.1f,   1.0f, 1.0f,
     -0.1f, 0.4f,  0.1f,   0.0f, 1.0f,
 
-    // ºóÃæ (-Z)
+    // åé¢ (-Z)
+
     -0.1f, 0.0f, -0.1f,   0.0f, 0.0f,
     -0.1f, 0.4f, -0.1f,   0.0f, 1.0f,
      0.1f, 0.4f, -0.1f,   1.0f, 1.0f,
@@ -29,7 +31,8 @@ static float vertices[] = {
      0.1f, 0.4f, -0.1f,   1.0f, 1.0f,
      0.1f, 0.0f, -0.1f,   1.0f, 0.0f,
 
-     // ×óÃæ (-X)
+     // å·¦é¢ (-X)
+
      -0.1f, 0.0f, -0.1f,   0.0f, 0.0f,
      -0.1f, 0.0f,  0.1f,   1.0f, 0.0f,
      -0.1f, 0.4f,  0.1f,   1.0f, 1.0f,
@@ -38,7 +41,8 @@ static float vertices[] = {
      -0.1f, 0.4f,  0.1f,   1.0f, 1.0f,
      -0.1f, 0.4f, -0.1f,   0.0f, 1.0f,
 
-     // ÓÒÃæ (+X)
+     // å³é¢ (+X)
+
       0.1f, 0.0f, -0.1f,   0.0f, 0.0f,
       0.1f, 0.4f,  0.1f,   1.0f, 1.0f,
       0.1f, 0.0f,  0.1f,   1.0f, 0.0f,
@@ -47,24 +51,28 @@ static float vertices[] = {
       0.1f, 0.4f, -0.1f,   0.0f, 1.0f,
       0.1f, 0.4f,  0.1f,   1.0f, 1.0f,
 
-      // ===================== Ê÷¹Ú£¨±£³ÖÄãÔ­À´µÄ£© =====================
+      // ===================== æ ‘å†  =====================
 
-      // Ç°Ãæ
+      // å‰é¢
+
       -0.3f, 0.35f, -0.3f,    0.0f, 0.0f,
        0.3f, 0.35f, -0.3f,   10.0f, 0.0f,
        0.0f, 1.0f,  0.0f,     5.0f, 10.0f,
 
-       // ÓÒÃæ
+       // å³é¢
+
         0.3f, 0.35f, -0.3f,    0.0f, 0.0f,
         0.3f, 0.35f,  0.3f,   10.0f, 0.0f,
         0.0f, 1.0f,  0.0f,     5.0f, 10.0f,
 
-        // ºóÃæ
+        // åé¢
+
          0.3f, 0.35f,  0.3f,    0.0f, 0.0f,
         -0.3f, 0.35f,  0.3f,   10.0f, 0.0f,
          0.0f, 1.0f,  0.0f,     5.0f, 10.0f,
 
-         // ×óÃæ
+         // å·¦é¢
+
          -0.3f, 0.35f,  0.3f,    0.0f, 0.0f,
          -0.3f, 0.35f, -0.3f,   10.0f, 0.0f,
           0.0f, 1.0f,  0.0f,     5.0f, 10.0f,
@@ -86,13 +94,13 @@ Tree::~Tree()
 
 bool Tree::init()
 {
-    // ¾²Ì¬Ö¸¶¨Ê÷¸ÉÎÆÀíÂ·¾¶
+    // é™æ€æŒ‡å®šæ ‘å¹²çº¹ç†è·¯å¾„
 
     const std::string trunkTexturePath = "assets/bark.jpg";
 
     std::cout << "Loading tree texture from: " << trunkTexturePath << std::endl;
 
-    // ´´½¨×ÅÉ«Æ÷
+    // åˆ›å»ºç€è‰²å™¨
 
     try {
         shader = new Shader("shaders/tree.vert", "shaders/tree.frag");
@@ -108,7 +116,7 @@ bool Tree::init()
         return false;
     }
 
-    // ´´½¨ VAO ºÍ VBO
+    // åˆ›å»º VAO å’Œ VBO
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -117,27 +125,31 @@ bool Tree::init()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // ¶¥µãÎ»ÖÃÊôĞÔ
+    // é¡¶ç‚¹ä½ç½®å±æ€§
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // ÎÆÀí×ø±êÊôĞÔ
+    // çº¹ç†åæ ‡å±æ€§
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
 
-    // ¼ÓÔØÊ÷¸ÉÎÆÀí
+    // åŠ è½½æ ‘å¹²çº¹ç†
 
     int width, height, channels;
+
+	// ç¿»è½¬å›¾åƒyè½´ä»¥åŒ¹é…OpenGLçº¹ç†åæ ‡ç³»
     stbi_set_flip_vertically_on_load(true);
 
     unsigned char* data = stbi_load(trunkTexturePath.c_str(), &width, &height, &channels, 0);
 
     if (data)
     {
+
+		// è®¾ç½®çº¹ç†æ ¼å¼
         GLenum format = GL_RGB;
         if (channels == 1)
             format = GL_RED;
@@ -149,17 +161,22 @@ bool Tree::init()
         std::cout << "Tree texture loaded: " << width << "x" << height
             << ", channels: " << channels << std::endl;
 
+
+		// åˆ›å»º OpenGL çº¹ç†å¯¹è±¡
         glGenTextures(1, &trunkTextureID);
         glBindTexture(GL_TEXTURE_2D, trunkTextureID);
 
+		// è®¾ç½®çº¹ç†åŒ…è£¹æ–¹å¼å’Œå‚æ•°
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+		// ä¸Šä¼ çº¹ç†æ•°æ®å¹¶ç”Ÿæˆ mipmaps
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
+        // è§£ç»‘
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     else
@@ -190,26 +207,26 @@ void Tree::draw(const glm::mat4& view, const glm::mat4& projection, const glm::m
 
     glBindVertexArray(VAO);
 
-    // »æÖÆÊ÷¸É£¨Ê¹ÓÃÎÆÀí£©
+    // ç»˜åˆ¶æ ‘å¹²ï¼ˆä½¿ç”¨çº¹ç†ï¼‰
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, trunkTextureID);
     shader->setInt("trunkTex", 0);
-    shader->setBool("useTexture", true);  // Ìí¼ÓÒ»¸öuniform¿ØÖÆ
+    shader->setBool("useTexture", true);  // æ·»åŠ ä¸€ä¸ªuniformæ§åˆ¶
 
-	glDrawArrays(GL_TRIANGLES, 0, 24); // 4¸ö²àÃæ£¬Ã¿Ãæ2¸öÈı½ÇĞÎ£¬¹²24¸ö¶¥µã
+	glDrawArrays(GL_TRIANGLES, 0, 24); // 4ä¸ªä¾§é¢ï¼Œæ¯é¢2ä¸ªä¸‰è§’å½¢ï¼Œå…±24ä¸ªé¡¶ç‚¹
 
-    // »æÖÆÊ÷Ò¶£¨´¿É«£¬²»Ê¹ÓÃÎÆÀí£©
+    // ç»˜åˆ¶æ ‘å¶ï¼ˆçº¯è‰²ï¼Œä¸ä½¿ç”¨çº¹ç†ï¼‰
 
     shader->setBool("useTexture", false);
     //shader->setVec3("leafColor", glm::vec3(0.2f, 0.8f, 0.2f));
 
     GLint locLeafColor = glGetUniformLocation(shader->ID, "leafColor");
 
-    glm::vec3 leafColor(0.1f, 0.4f, 0.1f);  // ÂÌÉ«
+    glm::vec3 leafColor(0.1f, 0.4f, 0.1f);  // ç»¿è‰²
     glUniform3fv(locLeafColor, 1, glm::value_ptr(leafColor));
 
-	// »æÖÆÊ÷¹Ú²¿·Ö£¨´ÓµÚ25¸ö¶¥µã¿ªÊ¼£¬¹²12¸ö¶¥µã£©
+	// ç»˜åˆ¶æ ‘å† éƒ¨åˆ†ï¼ˆä»ç¬¬25ä¸ªé¡¶ç‚¹å¼€å§‹ï¼Œå…±12ä¸ªé¡¶ç‚¹ï¼‰
 
     glDrawArrays(GL_TRIANGLES, 24, 12);  
 
