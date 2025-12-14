@@ -23,7 +23,7 @@ Ground::~Ground()
 }
 
 
-// ��ʼ��
+// 初始化
 
 bool Ground::init()
 {
@@ -37,9 +37,10 @@ bool Ground::init()
     //    return false;
     //}
 
+    // 地面半边长
     float s = size;
 
-    // ���� (x,y,z , u,v)
+    // 顶点 (x,y,z , u,v)
 
     //float vertices[] = {
     //    -s, 0.0f, -s,    0.0f, 0.0f,
@@ -51,7 +52,7 @@ bool Ground::init()
     //    -s, 0.0f, -s,    0.0f, 0.0f
     //};
   
-
+	// 为了让纹理重复铺设，调整uv坐标
     float scale = 10.0f;
 
     float vertices[] = {
@@ -75,12 +76,12 @@ bool Ground::init()
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // pos
+    // 位置属性
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // uv
+    // UV属性
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
         (void*)(3 * sizeof(float)));
@@ -89,22 +90,24 @@ bool Ground::init()
     glBindVertexArray(0);
 
 
-    // ��������
+    // 纹理加载
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // wrap repeat
+    // 包裹方式
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // filtering
+    // 过滤设置
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
         GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
         GL_LINEAR);
+
+    // 加载草地纹理
 
     int w, h, ch;
     unsigned char* data = stbi_load(
@@ -113,6 +116,8 @@ bool Ground::init()
 
     if (data)
     {
+        // 上传到GPU
+
         GLenum format = GL_RGB;
         if (ch == 4) format = GL_RGBA;
 
@@ -135,24 +140,26 @@ bool Ground::init()
 
 
 
-// ��Ⱦ
+// 渲染
 
 void Ground::render(const glm::mat4& view, const glm::mat4& projection, float yOffset)
 {
 
 	std::cout << "=== ground render test ===" << std::endl;
 
-    // ���OpenGL����
+    // 检查OpenGL错误
 
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
         std::cerr << "OpenGL error before rendering: " << error << std::endl;
     }
 
-	// ʹ����ɫ��
+	// 使用着色器
 
 	static bool shaderInitialized = false;
 	//static Shader* shader = nullptr;
+
+    // shader的延迟创建
 
 	if (!shaderInitialized) {
 		try {
@@ -178,10 +185,12 @@ void Ground::render(const glm::mat4& view, const glm::mat4& projection, float yO
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
 
+	// 模型矩阵进行地面高度偏移
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, yOffset, 0.0f));
     shader->setMat4("model", model);
 
+	// 绑定纹理
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
     shader->setInt("groundTex", 0);
