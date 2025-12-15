@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stb_image.h>
 #include"utils.h"
+#include "audio.h"
 
 ParticleSystem::ParticleSystem(int maxFireworks)
     : maxFireworks(maxFireworks){}
@@ -15,8 +16,14 @@ void ParticleSystem::init()
     glEnable(GL_PROGRAM_POINT_SIZE);
     glEnable(GL_BLEND);
 
-    particleShader = new Shader("shaders/particle_trail.vert", "shaders/particle_trail.frag");
-	rocketShader = new Shader("shaders/rocket.vert", "shaders/particle.frag");
+    particleShader = new Shader("D:/CGFP/shaders/particle_trail.vert", "D:/CGFP/shaders/particle_trail.frag");
+	rocketShader = new Shader("D:/CGFP/shaders/rocket.vert", "D:/CGFP/shaders/particle.frag");
+    
+    // Load firework audio files
+    fireworkSoundBuffer = AudioManager::getInstance().loadWAV("D:/launch.wav");
+    if (fireworkSoundBuffer == 0) {
+        std::cerr << "Failed to load launch.wav" << std::endl;
+    }
 
     // 1. 新建 10×float 统一 VAO/VBO
     glGenVertexArrays(1, &VAO);
@@ -204,4 +211,12 @@ void ParticleSystem::addFirework() {
     // 创建烟花
 
 	fireworks.emplace_back(pos, vol, particleCount, rocketscolor);
+    if (AudioManager::getInstance().getNumActiveSources() >= 16) {  // 限制最大同时音源数
+        std::cerr << "Too many audio sources, skipping" << std::endl;
+        return;
+    }
+    // Play launch sound
+    if (fireworkSoundBuffer != 0) {
+        AudioManager::getInstance().playSound(fireworkSoundBuffer, 0.5f, 1.0f);
+    }
 }

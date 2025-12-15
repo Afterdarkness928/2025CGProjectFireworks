@@ -12,6 +12,7 @@
 #include "skybox.h"
 #include "tree.h"
 #include "ground.h"
+#include "audio.h"
 
 
 
@@ -192,12 +193,12 @@ int main() {
     // 初始化天空盒
 
     std::vector<std::string> skyboxTextures = {
-        "resources/skybox/right.jpg",
-        "resources/skybox/left.jpg",
-        "resources/skybox/top.jpg",
-        "resources/skybox/bottom.jpg",
-        "resources/skybox/front.jpg",
-        "resources/skybox/back.jpg"
+        "D:/CGFP ver1/resources/skybox/right.jpg",
+        "D:/CGFP ver1/resources/skybox/left.jpg",
+        "D:/CGFP ver1/resources/skybox/top.jpg",
+        "D:/CGFP ver1/resources/skybox/bottom.jpg",
+        "D:/CGFP ver1/resources/skybox/front.jpg",
+        "D:/CGFP ver1/resources/skybox/back.jpg"
     };
 
     skybox = new Skybox();
@@ -265,6 +266,11 @@ int main() {
 
 
     
+
+    // 初始化音频系统
+    if (!AudioManager::getInstance().init()) {
+        std::cerr << "Failed to initialize audio system" << std::endl;
+    }
 
     // 初始化粒子系统
 
@@ -348,6 +354,9 @@ int main() {
 
         skybox->render(view, projection);
 
+        // 更新音频系统
+        AudioManager::getInstance().update();
+
         // 更新粒子系统
 
         particleSystem.update(deltaTime);
@@ -403,6 +412,9 @@ int main() {
     delete skybox;
     delete ground;
     delete tree;
+
+    // 关闭音频系统
+    AudioManager::getInstance().shutdown();
 
     glfwDestroyWindow(window);
     glfwTerminate();

@@ -10,12 +10,15 @@ inline constexpr float gravity = 9.81f;
 inline constexpr float air_drag = 0.031f;
 
 // 返回 [min, max] 区间的均匀随机浮点数
+
 float random(float min, float max);
 
 // 返回 [min, max] 区间的均匀随机整数（包含两端）
+
 int random(int min, int max);
 
 // 返回 0~1 之间的随机浮点数
+
 inline float random01() { return random(0.0f, 1.0f); }
 
 
