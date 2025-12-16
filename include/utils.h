@@ -7,7 +7,7 @@ inline constexpr float M_PI = 3.14159265358979323846f;
 
 inline constexpr float gravity = 9.81f;
 
-inline constexpr float air_drag = 0.031f;
+inline constexpr float air_drag = 0.002f;
 
 // 返回 [min, max] 区间的均匀随机浮点数
 
@@ -83,36 +83,30 @@ inline float starRadius(float ang, float R_outer = 1.0f, float R_inner = 0.4f)
 
 
 inline std::vector<glm::vec3>
-flowerRayPoints(int countPerLobe,
+flowerRayPoints(int pointsPerEdge,
     float R_outer,
     float R_inner,
     float baseSpeed,
     float life,
     const glm::vec3& center,
-    float BaseRad)          // 整体旋转（弧度）
+    float BaseRad)
 {
     std::vector<glm::vec3> out;
-    int total = countPerLobe * 10;                // 5 外顶 + 5 内顶 ≈ 10 段
-    float dAng = float(2 * M_PI) / float(total);  // 等角步长
-
-    out.reserve(total * 3);                       // 每粒子 3 个 vec3
+    int total = pointsPerEdge * 10;                // 5 外顶 + 5 内顶，每段 pointsPerEdge 点
+    float dAng = 2.0f * M_PI / float(total);
 
     for (int i = 0; i < total; ++i) {
-        float ang = i * dAng + BaseRad;           // ① 先整体旋转
-        float r = starRadius(ang, R_outer, R_inner); // ② 极坐标边界（保留弧线）
+        float ang = i * dAng + BaseRad;
+        float r = starRadius(ang, R_outer, R_inner);
 
-        // 位置：X=0 平面
+        // 两端标记：外顶 + 内顶（严格 10 个）
+        bool isTip = (i % pointsPerEdge == 0);   // 每段第 0 个点 = 外顶或内顶（两端）
+
         glm::vec3 local(0.f, r * std::cos(ang), r * std::sin(ang));
-        glm::vec3 pos = center + local;
-
-        // 速度：径向向外，大小 ∝ 边界半径（保留弧形速度场）
-        glm::vec3 radial(0.f, std::cos(ang), std::sin(ang));
-        glm::vec3 vel = radial * (r * baseSpeed);
-
-        // 打包：pos, vel, life
-        out.push_back(pos);
-        out.push_back(vel);
-        out.push_back(glm::vec3(life));
+        glm::vec3 pos = center + local;                // 平移到火箭中心
+        out.emplace_back(pos);                         // pos
+        out.emplace_back(float(isTip), cos(ang) * (r * baseSpeed), sin(ang) * (r * baseSpeed)); // vel
+        out.emplace_back(life, 0.f, 0.f);              // life
     }
     return out;
 }

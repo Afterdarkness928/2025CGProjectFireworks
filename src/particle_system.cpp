@@ -20,7 +20,7 @@ void ParticleSystem::init()
 	rocketShader = new Shader("shaders/rocket.vert", "shaders/particle.frag");
     
     // Load firework audio files
-    fireworkSoundBuffer = AudioManager::getInstance().loadWAV("launch.wav");
+    fireworkSoundBuffer = AudioManager::getInstance().loadWAV("resources/sound/launch.wav");
     if (fireworkSoundBuffer == 0) {
         std::cerr << "Failed to load launch.wav" << std::endl;
     }
@@ -194,7 +194,7 @@ void ParticleSystem::addFirework(FireworkType type) {
 	if (fireworks.size() >= maxFireworks) return;
     // 1. 位置/速度/粒子数保持原样
     auto pos = glm::vec3(random(50.0f, 70.0f), 0.0f, random(-200.0f, 200.0f));
-    auto vol = glm::vec3(0.0f, random(80.0f, 120.0f), 0.0f);
+    auto vol = glm::vec3(0.0f, random(50.0f, 100.0f), 0.0f);
     int particleCount = random(150, 400);
 
     float baseHue = random(15.0f, 220.0f);   // 橙→黄

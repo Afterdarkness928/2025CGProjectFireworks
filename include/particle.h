@@ -12,9 +12,9 @@ public:
 
     // 构造函数
 
-    Particle(float x, float y, float z, float vx, float vy, float vz, float life, float r, float g, float b, float a);
-	Particle(glm::vec3 pos, glm::vec3 vel, float life, glm::vec4 color);
-    Particle(glm::vec3 pos, glm::vec3 vel, float life, glm::vec4 color,bool isTrail,bool isPhysicsEnabled);
+    Particle(float x, float y, float z, float vx, float vy, float vz, float life, float r, float g, float b, float a,float size=4.0f);
+	Particle(glm::vec3 pos, glm::vec3 vel, float life, glm::vec4 color,float size=4.f);
+    Particle(glm::vec3 pos, glm::vec3 vel, float life, glm::vec4 color,bool isTrail,bool isPhysicsEnabled,float size=4.0f);
     // 更新粒子状态
 
 

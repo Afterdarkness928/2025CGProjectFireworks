@@ -25,17 +25,17 @@ Firework::Firework(glm::vec3 position, glm::vec3 velocity, int particleCount, gl
 
 void Firework::update(float dt)
 {
-
+    
     if (status == LAUNCHING ) {
         if(!rocket.isTrail){
-            particles.emplace_back(rocket.position, glm::vec3{0.f},
-                random(0.3f, 1.0f), rocket.color,true,true);
+            particles.emplace_back(rocket.position, glm::vec3{0.f},random(0.3f,0.6f), rocket.color, true, true,2.0f);
 		}
     }
 
     // 爆炸拖影：每帧一个点（主粒子已更新完）
     if (status == EXPLOSING) {
         for (size_t i = 0; i < particles.size(); ++i) {
+            
             if (!particles[i].isTrail) {
                 if (type == common) {
                     particles.emplace_back(particles[i].position, glm::vec3{0.f},
@@ -47,7 +47,11 @@ void Firework::update(float dt)
                 }else if(type==star){
                     particles.emplace_back(particles[i].position, particles[i].velocity,
                         random(1.8f, 2.4f), particles[i].color, true, false);
-				}
+                }
+                else if (type == flower) {
+                    particles.emplace_back(particles[i].position, glm::vec3{0.f},
+                        particles[i].life/2, particles[i].color, true, false, 3.f);
+                }
 
                 
             }
@@ -69,11 +73,15 @@ void Firework::update(float dt)
     switch (status) {
     case LAUNCHING:
         rocket.update(dt,Firework::sway);
-        if (rocket.isAlive() && rocket.velocity.y < 0.0f) {
+        if (rocket.isAlive() && rocket.velocity.y < 5.0f) {
             std::cout << "Firework explode at position: "
                 << rocket.position.x << ", "
                 << rocket.position.y << ", "
-                << rocket.position.z << std::endl;
+                << rocket.position.z <<", vol:"
+				<< rocket.velocity.x << ", "
+				<< rocket.velocity.y << ", "
+                << rocket.velocity.z
+				<< std::endl;
             explode();
             status = EXPLOSING;
         }
@@ -136,11 +144,11 @@ void Firework::explode_common()
     int outerCount = particleCount - innerCount;
 
     // 内球参数
-    float innerSpeed = random(10.f, 30.f);
-    float innerLife = random(0.5f, 1.2f);
+    float innerSpeed = random(40.f, 50.f);
+    float innerLife = random(0.5f, 1.0f);
 
     // 外球参数
-    float outerSpeed = random(30.f, 100.f);
+    float outerSpeed = random(60.f,80.f);
     float outerLife = random(1.5f, 2.5f);
 
 
@@ -174,8 +182,8 @@ void Firework::explode_common()
 }
 
 void Firework::explode_scatter(){
-    float baseSpeed = random(30.f, 100.f);
-    float life = random(0.5f, 1.5f);
+    float baseSpeed = random(20.f, 30.f);
+    float life = random(0.5f, 1.f);
     /* 散点版：单球+单一随机颜色+每粒子独立速度扰动 */
     glm::vec4 singleColor = glm::vec4(random_vec3(), 1.0f); // 一种随机色
     for (int i = 0; i < particleCount; ++i) {
@@ -190,19 +198,23 @@ void Firework::explode_star()
 {
     const float outerR = 2.5f;
     const float innerR = 1.0f;
-    const float speed = random(6.f, 6.f);
-    const float life = random(10.5f, 10.5f);
+    const float speed = random(3.f, 6.f);
+    const float life = random(3.5f, 5.5f);
     glm::vec4 color = glm::vec4(random_vec3(), 1.0f);
 
     float angle = random(0.f,2*M_PI );
     auto data = starRayPoints(30, outerR, innerR, speed, life, rocket.position,angle);
 
     for (size_t i = 0; i < data.size(); i += 3) {   // 每 3 个 vec3 是一份粒子
-        Particle p(data[i], data[i + 1], data[i + 2].x, color);
-        p.size = random(2.f, 5.f);
-        p.isTrail = true;
-        p.isPhysicsEnabled = false;
-        particles.push_back(p);
+        particles.emplace_back(
+            data[i],                           // pos
+            data[i + 1],                       // vel
+            data[i + 2].x,                     // life
+            color,                             // color
+            true,                             // isTrail = false
+            false,                              // isPhysicsEnabled = false
+            10.f
+        );
     }
 }
 
@@ -211,20 +223,28 @@ void Firework::explode_flower()
     const float outerR = 2.5f;
     const float innerR = 1.0f;
     const float speed = random(6.f, 6.f);
-    const float life = random(10.5f, 10.5f);
+    const float life = random(2.f, 3.f);
     glm::vec4 color = glm::vec4(random_vec3(), 1.0f);
 
     float angle = random(0.f, 2 * M_PI);
-    
     auto data = flowerRayPoints(30, outerR, innerR, speed, life, rocket.position, angle);
 
     for (size_t i = 0; i < data.size(); i += 3) {   // 每 3 个 vec3 是一份粒子
-        std::cout<<"Flower Particle No."<<(i/3)+1<<": velocity=("<<data[i+1].x<<","<<data[i+1].y<<","<<data[i+1].z<<")"<<std::endl;
-        Particle p(data[i], data[i + 1], data[i + 2].x, color);
-        p.size = random(2.f, 5.f);
-        p.isTrail = true;
-        p.isPhysicsEnabled = false;
-        particles.push_back(p);
+        glm::vec3 pos   = data[i];
+        glm::vec3 vel   = data[i + 1];
+        float life      = data[i + 2].x;
+        bool isTip      = vel.x != 0.0f;               // 取出花尖标记
+
+        
+        particles.emplace_back(
+            pos, glm::vec3(0.f,vel.y,vel.z), life, color,
+            !isTip,               // isTrail
+            false,               // usePhysics
+            10.f  // size
+        );
+
+        if (isTip)
+            std::cout << "Flower TIP detected! velocity=(" << vel.y << "," << vel.z << ")\n";
     }
 }
 

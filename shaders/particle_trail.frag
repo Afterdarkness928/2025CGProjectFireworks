@@ -4,23 +4,21 @@ in  float v_lifeT;
 in  float v_pointSize;   // 实际像素直径
 out vec4 FragColor;
 
-uniform sampler2D u_gradient;   // 1×64 梯度纹理
+uniform sampler2D u_gradient;   // 保留，暂不用
 
 void main(){
-    // 1. 梯度遮罩
-    float dist = length(gl_PointCoord - 0.5) * 2.0;
-    float g    = texture(u_gradient, vec2(dist, 0.5)).r;
-    if(g < 0.01) discard;          // 可选边缘剔除
+    // 1. 中心亮-边缘暗（径向衰减）
+    float dist = length(gl_PointCoord - 0.5) * 2.0;        // 0→1
+    float radial = 1.0 - dist;                             // 中心=1 边缘=0
+    radial = pow(radial, 3.0);                             // 可调幂次
 
-    // 2. 中心过曝：按「像素半径」压暗
-    float pixelDist = dist * v_pointSize;              // 0 → v_pointSize
-    float core = 1.0 - smoothstep(0.0, v_pointSize * 0.6, pixelDist);
-    core = pow(core, 4.0);                             // 可调幂次
+    // 2. 生命初期「过曝抑制」曲线
+    // lifeT: 1.0(出生) → 0.0(死亡)
+    // 前 20 % 时间亮度被额外压低，避免中心叠白
+    float suppress = smoothstep(0.0, 0.2, 1.0 - v_lifeT);  // 0→1
+    float brightness = radial * (0.7 + 0.3 * suppress);    // 0.7→1.0
 
-    // 3. 边缘淡出：按像素距离
-    float edge = 1.0 - smoothstep(v_pointSize * 0.7, v_pointSize, pixelDist);
-
-    // 4. 最终颜色
-    vec3 rgb = v_color.rgb * core * edge;
-    FragColor = vec4(rgb, 1.0);
+    // 3. 最终颜色（alpha 仍由顶点衰减）
+    vec3 rgb = v_color.rgb * brightness;
+    FragColor = vec4(rgb, v_color.a);
 }

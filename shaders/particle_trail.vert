@@ -25,29 +25,20 @@ vec3 fireColor(float t){
 }
 
 void main(){
-    float lifeT = aLife / aMaxLife;               // 0→1 生命比
-    float temp  = 0.8 + 0.2 * hash1f(uint(gl_VertexID));
-    float spark = 0.85 + 0.15 * hash1f(uint(gl_VertexID + 1));
+    float lifeT = aLife / aMaxLife;
 
-    // 主色调：粒子自身颜色 ↔ 火焰色 混合
-    vec3 baseRgb = aColor.rgb;
-   // 现在：缓动白炽（保持自身颜色更久）
-    float heatT = pow(lifeT * temp, 0.25);   // 开根号 → 慢热
-    vec3 flameRgb = fireColor(heatT);
-    vec3 rgb = mix(baseRgb, flameRgb, 0.5) * spark; // 0.5 可调
-
-    v_color   = vec4(rgb, aColor.a * lifeT); // alpha 衰减
+    // 1. 直接输出原色，不做任何白炽
+    v_color   = vec4(aColor.rgb, aColor.a * lifeT);
     v_lifeT   = lifeT;
 
+    // 2. 先小后大 + 透视缩放（保留）
     vec4 viewPos   = view * model * vec4(aPos, 1.0);
-    float depth = max(-viewPos.z, 1.0);   // 强制 ≥1
-
-    // 爆炸扩散：先小后大
-    float expandT   = 1.0 - lifeT;                 // 0→1 扩散度
-    float startSize = aSize * 0.2f;                // 初始只有 20 %
-    float endSize   = aSize * 2.0f;                // 最终 200 %
-    v_pointSize     = mix(startSize, endSize, expandT);
+    float depth    = max(-viewPos.z, 1.0);
+    float expandT  = 1.0 - lifeT;
+    float startSize= aSize * 0.2f;
+    float endSize  = aSize * 2.0f;
+    v_pointSize    = mix(startSize, endSize, expandT);
 
     gl_Position    = projection * viewPos;
-    gl_PointSize   = v_pointSize * (150.0 / -viewPos.z);   // 用实际大小
+    gl_PointSize   = v_pointSize * (500.0 / depth);
 }
